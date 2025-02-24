@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from datetime import date, datetime
 from liverscan.models import Diagnosis
 from .forms import SignUpForm
-
+import requests
 
 # Create your views here.
 def signup_view(request):

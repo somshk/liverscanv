@@ -9,7 +9,6 @@ def logout_view(request):
     if request.method == "POST":
         if 'logout' in request.POST:
             logout(request)
-            print('\n\n can we redirect chat \n\n')
 
             return redirect('home')
         

@@ -3,6 +3,10 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Diagnosis
 from django.core.exceptions import ValidationError
 
+from google.cloud import storage
+import requests
+from utils import upload_triphasic_images, multitemporal_fusion
+
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -17,9 +21,17 @@ def create_request_diagnosis(request):
     birthday = request.POST.get('birthday')
     doctor_assigned = request.user
 
+    ct_scans = request.FILES.getlist('images')
+    image_urls = upload_triphasic_images(ct_scans, patient_initials, birthday)
+    
+    unenhanced_ct, arterial_ct, portal_venous_ct = image_urls
+
     try:
         # create the report instance
         diagnosis = Diagnosis(
+            unenhanced_ct=unenhanced_ct,
+            arterial_ct=arterial_ct,
+            portal_venous_ct=portal_venous_ct,
             patient_initials=patient_initials,
             birthday = birthday,
             doctor_assigned=doctor_assigned
@@ -27,7 +39,10 @@ def create_request_diagnosis(request):
 
         diagnosis.save()
 
-    # throw False when ValidationError occurs
+        # Call Cloud Function to process images
+        multitemporal_fusion(image_urls, patient_initials, birthday)
+
+    
     except ValidationError as e:
         return (False, e.messages)
     return (True, None)

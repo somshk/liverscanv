@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
         ('doctor', 'Doctor')
     )
 
-    role = models.CharField(max_length=7, choices=ROLE_CHOICES, default='patient')
+    role = models.CharField(max_length=7, choices=ROLE_CHOICES, default='doctor')
 
 
 class Diagnosis(models.Model):
@@ -38,9 +38,15 @@ class Diagnosis(models.Model):
     birthday = models.DateField()
     diagnosis_date = models.DateField()
 
-    unenhanced_ct = models.ImageField(blank=True, null=True, upload_to='ct_scans/unenhanced/')
-    arterial_ct = models.ImageField(blank=True, null=True, upload_to='ct_scans/arterial/')
-    portal_venous_ct = models.ImageField(blank=True, null=True, upload_to='ct_scans/portal_venous/')
+    # images
+    unenhanced_ct = models.URLField()
+    arterial_ct = models.URLField()
+    portal_venous_ct = models.URLField()
+    transformed_ct = models.URLField(blank=True, null=True)
+    inference_result = models.URLField(blank=True, null=True)
+    final_unenehanced_ct = models.URLField(blank=True, null=True)
+    final_arterial_ct = models.URLField(blank=True, null=True)
+    final_portal_venous_ct = models.URLField(blank=True, null=True)
     
     # output of model
     initial_diagnosis = models.CharField(null=True, max_length=7, choices=DIAGNOSIS_CHOICES)
@@ -60,16 +66,19 @@ class Diagnosis(models.Model):
         
         if not self.diagnosis_date:
             self.diagnosis_date = datetime.now().date()
+
+        
         
         if isinstance(self.birthday, str):
             self.birthday = datetime.strptime(self.birthday, '%Y-%m-%d').date()
         if isinstance(self.diagnosis_date, str):
             self.diagnosis_date = datetime.strptime(self.diagnosis_date, '%Y-%m-%d').date()
 
-        initials = self.patient_initials.upper()
-        bday_formatted = self.birthday.strftime("%m%d%y")
-        diagnosis_date_formatted = self.diagnosis_date.strftime("%m%d%y")
-        self.patient_id = f"{initials}-{bday_formatted}-{diagnosis_date_formatted}"
+        if not self.patient_id:
+            initials = self.patient_initials.upper()
+            bday_formatted = self.birthday.strftime("%m%d%y")
+            diagnosis_date_formatted = self.diagnosis_date.strftime("%m%d%y")
+            self.patient_id = f"{initials}-{bday_formatted}-{diagnosis_date_formatted}"
 
         if not self.status:
             self.status = 1
@@ -77,4 +86,4 @@ class Diagnosis(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Diagnose: {self.patient_id} - {self.initial_diagnosis}."
+        return f"Diagnosis: {self.patient_id} - {self.initial_diagnosis}."

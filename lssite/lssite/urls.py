@@ -30,4 +30,5 @@ urlpatterns = [
     path('doctor/history', patient_history_view, name='patient-history'),
     path('doctor/upload', upload_view, name='upload'),
     path('doctor/login', doctor_login_view, name='doctor_login'),
+    path('accounts/', include('allauth.urls')),
 ]

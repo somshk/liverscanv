@@ -8,6 +8,9 @@
     <div class="intro-description">
         <div class="intro-title">LiverScan V</div>
         <div class="intro-text">LiverScan V is a computer vision model that automatically detects and segments focal liver lesions including tumor, cyst, and abscess. It is developed to streamline multi-class segmentation of FLLs for faster diagnosis.</div>
+        {% if user.is_authenticated %}
+        <p>You are signed is as {{ user.email }}</p>
+        {% endif %}
     </div>
 </div>
 <div class="stats-container">

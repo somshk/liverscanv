@@ -1,3 +1,4 @@
+{% load socialaccount %}
 {% load static %}
 {% include "main/links.html" %}
 
@@ -13,6 +14,11 @@
                 <div class="login-form-password">
                     <input type="password" class="text-input-field" name="password" id="password-login" placeholder="Password">
                 </div>
+
+
+                <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+
+
                 <div class="login-form-remember">
                     <div class="remember-me-checkbox">
                         <input type="checkbox" class="checkbox">
@@ -38,6 +44,6 @@
     </div>
     
     <div class="login-icon">
-        <img src="{% static 'img/sub-icon.svg' %}" alt="">
+        <img class='sub-svg' src="{% static 'img/sub-icon.svg' %}" alt="">
     </div>    
 </div>
