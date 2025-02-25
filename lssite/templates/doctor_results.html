@@ -65,6 +65,7 @@
                     <hr>
                     <div class="results-details-block">
                         <form method="post">
+                            <input type="hidden" name="action" value="validate_diagnosis">
                             {% csrf_token %}
                             <div class="results-details-item">
                                 <div class="results-details-item-name ">Patient ID:</div>

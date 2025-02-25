@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 def logout_view(request):
-    if request.method == "POST":
+    if request.method == "POST" and request.POST.get("action") == 'logout':
         if 'logout' in request.POST:
             logout(request)
 
@@ -37,7 +37,7 @@ def doctor_results_view(request):
     context['curr_page'] = 'doctor-results'
     context['diagnoses'] = Diagnosis.objects.filter(status__lt = 3)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get("action") == 'validate_diagnosis':
         validate_diagnosis(request=request)
 
     return render(request, 'doctor_results.html', context=context)
@@ -58,7 +58,7 @@ def upload_view(request):
     context = {}
     context['curr_page'] = 'upload'
 
-    if request.method == "POST":
+    if request.method == "POST" and request.POST.get("action") == 'create_request_diagnosis':
         create_request_diagnosis(request=request)
     
     return render(request, 'upload.html', context=context)

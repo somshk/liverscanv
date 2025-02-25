@@ -36,6 +36,7 @@
         <div class="navbar-page logout-button">
             <form method="post" class="logout-form">
                 {% csrf_token %}
+                <input type="hidden" name="action" id="logout">
                 <button type="submit" name="logout" class="logout-button">Logout?</button>
             </form>
         </div>
