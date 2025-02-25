@@ -31,6 +31,13 @@
                     <div class="error">{{ form.password2.errors }}</div>
                     {% endif %}
                 </div>
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}" style="color:#EB282E; font-weight:bold">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 <div class="login-form-remember">
                     <div class="remember-me-checkbox">
                         <input type="checkbox" class="checkbox">

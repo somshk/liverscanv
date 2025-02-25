@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.getenv('DEBUG') != '0' else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -57,10 +57,18 @@ AUTHENTICATION_BACKENDS = (
 
 ACCOUNT_ADAPTER = 'liverscan.adapters.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'liverscan.adapters.CustomSocialAccountAdapter'
+# ACCOUNT_LOGIN_METHODS = {'email'}
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_SIGNUP_REDIRECT_URL = "/"  # Redirect to homepage after signup
+# SOCIALACCOUNT_AUTO_SIGNUP = True   # Automatically create accounts
+# SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SITE_ID = 2
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login/'
+AUTH_USER_MODEL = 'liverscan.CustomUser'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -132,8 +140,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
-AUTH_USER_MODEL = 'liverscan.CustomUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

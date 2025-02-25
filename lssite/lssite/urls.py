@@ -15,9 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import render
+from django.conf.urls import handler404, handler403
 from django.urls import path, include
 from .views import (home_view, doctor_results_view, patient_history_view, upload_view)
 from liverscan.views import (login_view, signup_view, doctor_login_view, results_view)
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+handler404 = custom_404_view
+
+def custom_403_view(request, exception):
+    return render(request, '403.html', status=403)
+
+handler403 = custom_403_view  # Register the custom 403 handler
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

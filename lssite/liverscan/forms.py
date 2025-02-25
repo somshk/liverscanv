@@ -2,12 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Diagnosis
 from django.core.exceptions import ValidationError
+from .utils import upload_triphasic_images, multitemporal_fusion
 
-from google.cloud import storage
-import requests
-from utils import upload_triphasic_images, multitemporal_fusion
-
-class SignUpForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:

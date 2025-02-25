@@ -255,7 +255,6 @@ button:hover {
   .intro-div {
     flex-direction: column;
     justify-content: flex-start !important;
-    height: -moz-fit-content !important;
     height: fit-content !important;
   }
   .intro-div > div {
@@ -954,4 +953,15 @@ button:hover {
   .main-content {
     margin-top: 60px !important;
   }
+}
+.error-links .error-image {
+  width: 600px;
+}
+.error-links .large-error-message {
+  font-size: 50px;
+  text-align: center;
+  font-weight: 800;
+}
+.error-links .small-error-message {
+  margin-top: 15px;
 }/*# sourceMappingURL=main.css.map */

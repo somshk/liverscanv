@@ -1,0 +1,14 @@
+{% extends 'main/main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="error-links">
+    <img class="error-image" src="{% static 'img/404.png' %}" alt="">
+    <div class="large-error-message">
+        Page not found.
+    </div> 
+    <div class="small-error-message">
+        If you think this is a bug, please report to our developers at <a href="mailto:liverscanv@gmail.com">liverscanv@gmail.com</a>.
+    </div>
+</div>
+{% endblock %}

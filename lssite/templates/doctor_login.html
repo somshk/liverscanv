@@ -14,9 +14,23 @@
                 <div class="login-form-password">
                     <input type="password" class="text-input-field" name="password" id="password-login" placeholder="Password">
                 </div>
+                {% if error %}
+                <div style="color:#EB282E; font-weight:bold" class="error-login">
+                    Invalid credentials, please try again.
+                </div>
+                {% endif %}
+
+                <div class="login-form-password">
+                    <a href="{% provider_login_url 'google' %}?next=/">
+                        <div style="background-color:#EB282E; color: white; opacity: 0.99; font-weight: bold; display:flex; justify-content: center; font-size: 18px;" class="text-input-field">
+                            <img style='height: 20px; width:20px; margin-right: 15px; filter: drop-shadow(0px 0px 10px rgba(80,80,80,1.0));' src="{% static 'img/google.png' %}" alt="">
+                            Sign in with Google
+                        </div>
+                    </a>
+                </div>
 
 
-                <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+                
 
 
                 <div class="login-form-remember">
@@ -39,6 +53,7 @@
                         <a href="{% url 'login' %}">View results as patient?</a>
                     </div>
                 </div>
+                
             </div>
         </form>
     </div>

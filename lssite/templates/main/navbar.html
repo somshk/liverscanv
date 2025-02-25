@@ -41,10 +41,11 @@
         </div>
         
         {% else %}
-        
-        <div class="navbar-page login-button">
-            <a href="{% url 'login' %}">Fill up to see results</a>
-        </div>
+        <a href="{% url 'login' %}">
+            <div style="font-weight: bold;" class="navbar-page login-button">
+            Fill up to see results
+            </div>
+        </a>
         {% endif %}
     </div>
 </div>

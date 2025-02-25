@@ -3,16 +3,18 @@ from google.cloud import storage
 
 def upload_triphasic_images(ct_scans, patient_initials, birthday):
     storage_client = storage.Client()
+    print('a')
     bucket = storage_client.bucket('lvscan_input')
-
+    print('a')
     image_names = ['unenhanced', 'arterial', 'portal_venous']
     image_urls = []
-
+    print('a')
     for scan, name in zip(ct_scans, image_names):
         file_name = f'{patient_initials}-{birthday}-{name}'
         blob = bucket.blob(file_name)
         blob.upload_from_file(scan)
         image_urls.append(file_name)
+        print(image_urls)
 
     return image_urls
 

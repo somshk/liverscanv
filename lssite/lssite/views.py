@@ -3,6 +3,8 @@ from liverscan.models import (Diagnosis)
 from liverscan.forms import create_request_diagnosis, validate_diagnosis
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth import logout
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 def logout_view(request):
@@ -13,7 +15,11 @@ def logout_view(request):
             return redirect('home')
         
 def doctor_required(user):
-    return user.role == 'doctor'
+    is_doctor = user.is_authenticated and user.role == 'doctor'
+
+    if not is_doctor:
+        raise PermissionDenied
+    return is_doctor
 
 def home_view(request):
     logout_view(request)
