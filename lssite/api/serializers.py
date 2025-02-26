@@ -14,7 +14,8 @@ class DiagnosisSerializer(serializers.ModelSerializer):
         model = Diagnosis
         fields = [
             'id', 'patient_id', 'status', 'doctor_assigned', 'patient_initials',
-            'birthday', 'diagnosis_date', 'unenhanced_ct', 'arterial_ct',
-            'portal_venous_ct', 'initial_diagnosis', 'confidence', 'area',
-            'remarks', 'final_diagnosis'
+            'birthday', 'diagnosis_date', 'initial_diagnosis', 'confidence', 'area',
+            'remarks', 'final_diagnosis', 
+
+            'proxy_unenhanced_ct', 'proxy_arterial_ct', 'proxy_portal_venous_ct', 'proxy_transformed_ct'
         ]

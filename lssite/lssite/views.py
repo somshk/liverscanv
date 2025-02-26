@@ -12,7 +12,15 @@ def logout_view(request):
         if 'logout' in request.POST:
             logout(request)
 
-            return redirect('home')
+            print('WE LOGGED OUT ALREADY FUCKING REDIRECT!')
+
+            context = {}
+            context['curr_page'] = 'home'
+            context['diagnosed'] = len(Diagnosis.objects.all())
+            
+            print(context)
+
+            return True # render(request, 'index.html', context=context)
         
 def doctor_required(user):
     is_doctor = user.is_authenticated and user.role == 'doctor'
@@ -22,7 +30,8 @@ def doctor_required(user):
     return is_doctor
 
 def home_view(request):
-    logout_view(request)
+    if logout_view(request):
+        return redirect('home')
 
     context = {}
     context['curr_page'] = 'home'
@@ -31,11 +40,14 @@ def home_view(request):
 
 @user_passes_test(doctor_required)
 def doctor_results_view(request):
-    logout_view(request)
+    if logout_view(request):
+        return redirect('home')
 
+
+    print("gagu ano ba mauuna")
     context = {}
     context['curr_page'] = 'doctor-results'
-    context['diagnoses'] = Diagnosis.objects.filter(status__lt = 3)
+    context['diagnoses'] = Diagnosis.objects.filter(status__lt = 3, doctor_assigned=request.user)
 
     if request.method == 'POST' and request.POST.get("action") == 'validate_diagnosis':
         validate_diagnosis(request=request)
@@ -44,16 +56,18 @@ def doctor_results_view(request):
 
 @user_passes_test(doctor_required)
 def patient_history_view(request):
-    logout_view(request)
+    if logout_view(request):
+        return redirect('home')
 
     context = {}
     context['curr_page'] = 'patient-history'
-    context['diagnoses'] = Diagnosis.objects.filter(status=3)
+    context['diagnoses'] = Diagnosis.objects.filter(status=3, doctor_assigned=request.user)
     return render(request, 'patient_history.html', context=context)
 
 @user_passes_test(doctor_required)
 def upload_view(request):
-    logout_view(request)
+    if logout_view(request):
+        return redirect('home')
     
     context = {}
     context['curr_page'] = 'upload'

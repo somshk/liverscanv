@@ -150,6 +150,13 @@ async function fetchDiagnosisDetails(diagnosisId) {
         } else {
             areaDiv.textContent = `${diagnosis_data.area} cm\u00B2`;
         }
+
+        const unenhanced_img = document.querySelector('img[alt="unenhanced"]')
+        unenhanced_img.src = `https://storage.googleapis.com/lvscan_input_pub/${diagnosis_data.unenhanced_ct}`
+        const arterial_img = document.querySelector('img[alt="arterial"]')
+        arterial_img.src = `https://storage.googleapis.com/lvscan_input_pub/${diagnosis_data.arterial_ct}`
+        const portal_venous_img = document.querySelector('img[alt="portal venous"]')
+        portal_venous_img.src = `https://storage.googleapis.com/lvscan_input_pub/${diagnosis_data.portal_venous_ct}`
         
         console.log(diagnosis_data);
 
