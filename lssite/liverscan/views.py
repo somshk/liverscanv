@@ -20,7 +20,9 @@ def signup_view(request):
             username = form.cleaned_data.get("username")
             email = form.cleaned_data.get("email")
 
-            if CustomUser.objects.filter(username=username).exists():
+            if username == '' or username == None:
+                messages.error(request, "The username cannot be empty.")
+            elif CustomUser.objects.filter(username=username).exists():
                 messages.error(request, "This username is already taken.")
             elif CustomUser.objects.filter(email=email).exists():
                 messages.error(request, "This email is already registered.")

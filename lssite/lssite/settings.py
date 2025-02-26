@@ -55,17 +55,18 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-ACCOUNT_ADAPTER = 'liverscan.adapters.CustomAccountAdapter'
-SOCIALACCOUNT_ADAPTER = 'liverscan.adapters.CustomSocialAccountAdapter'
-# ACCOUNT_LOGIN_METHODS = {'email'}
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_SIGNUP_REDIRECT_URL = "/"  # Redirect to homepage after signup
-# SOCIALACCOUNT_AUTO_SIGNUP = True   # Automatically create accounts
-# SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = "liverscan.adapters.CustomSocialAccountAdapter"
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 
 SITE_ID = 2
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/doctor/upload'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'login/'
 AUTH_USER_MODEL = 'liverscan.CustomUser'

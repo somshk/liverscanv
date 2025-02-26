@@ -1,3 +1,4 @@
+import os
 import requests
 from google.cloud import storage
 
@@ -15,13 +16,13 @@ def upload_triphasic_images(ct_scans, patient_initials, birthday, current_date):
 
     return image_urls
 
-def multitemporal_fusion(image_urls, patient_initials, birthday, current_date):
+def run_inference(image_urls, patient_initials, birthday, current_date):
     requests.post(
-            "https://multi-temporal-fusion-346213469712.asia-east1.run.app",
+            os.getenv("MTF_FUCNTION_ENDPOINT"),
             json={"input_bucket": 'lvscan_input',
-                   "output_bucket": 'lvscan_output',
+                   "output_bucket": 'lvscan_input',
                    "unenhanced_path": image_urls[0],
                    "arterial_path": image_urls[1],
                    "portal_venous_path": image_urls[2],
-                   "output_filename": f'{patient_initials}-{birthday}-preprocessed-{current_date}.png'}
+                   "preprocessed_filename": f'{patient_initials}-{birthday}-preprocessed-{current_date}.png'}
         )

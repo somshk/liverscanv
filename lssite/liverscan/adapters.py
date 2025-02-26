@@ -1,34 +1,44 @@
-from django.utils.http import url_has_allowed_host_and_scheme as is_safe_url  # Correct import
-from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth.account.utils import user_email
+from allauth.account.utils import user_field
+from django.utils.text import slugify
+from django.contrib.auth import get_user_model
+import uuid
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def populate_user(self, request, sociallogin, data):
+        """
+        Custom logic to avoid requiring a username when using Google login.
+        """
         user = super().populate_user(request, sociallogin, data)
 
-        # Assign a default role if not set (modify logic as needed)
-        if not user.role:
-            if '@gmail.com' in user_email(user):  # Example: Assign role based on email domain
-                user.role = 'doctor'
-            else:
-                user.role = 'patient'
+        if sociallogin.account.provider == "google":
+            # Generate a unique username from email or a random UUID
+            email = data.get("email", "")
+            base_username = slugify(email.split("@")[0]) if email else f"user-{uuid.uuid4().hex[:10]}"
+            
+            # Ensure username uniqueness
+            user_field(user, "username", self.generate_unique_username(base_username))
 
         return user
 
-    def save_user(self, request, sociallogin, form=None):
-        user = super().save_user(request, sociallogin, form)  # Call the parent method
+    def generate_unique_username(self, base_username):
+        """
+        Ensure that the generated username is unique.
+        """
+        from django.contrib.auth import get_user_model
 
-        # Ensure role is set before saving
-        if not user.role:
-            if '@gmail.com' in user_email(user):
-                user.role = 'doctor'
-            else:
-                user.role = 'patient'
+        User = get_user_model()
+        username = base_username
+        counter = 1
 
-        user.save()  # Save the updated user
-        return user
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}-{counter}"
+            counter += 1
 
-class CustomAccountAdapter(DefaultAccountAdapter):
-    def is_safe_url(self, url):
-        return is_safe_url(url, allowed_hosts=None)
+        return username
+
+    def is_auto_signup_allowed(self, request, sociallogin):
+        """
+        Bypass the intermediary signup page and allow automatic signup.
+        """
+        return True

@@ -1159,3 +1159,18 @@ button {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.login-with-google {
+    background-color:white;
+    color: rgba(0,0,0,0.75);
+    opacity: 0.99; font-weight: bold;
+    display:flex;
+    justify-content: center !important;
+    font-size: 18px;
+    text-align: center;
+    transition: filter 0.3s ease;
+
+    &:hover {
+        filter: brightness(0.95);
+    }
+}

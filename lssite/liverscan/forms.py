@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Diagnosis
 from django.core.exceptions import ValidationError
-from .utils import upload_triphasic_images, multitemporal_fusion
+from .utils import upload_triphasic_images, run_inference
 from datetime import date
 
 class CustomUserCreationForm(UserCreationForm):
@@ -47,7 +47,7 @@ def create_request_diagnosis(request):
         diagnosis.save()
 
         # Call Cloud Function to process images
-        multitemporal_fusion(image_urls, patient_initials, birthday, diagnosis.diagnosis_date)
+        run_inference(image_urls, patient_initials, birthday, diagnosis.diagnosis_date)
 
     
     except ValidationError as e:

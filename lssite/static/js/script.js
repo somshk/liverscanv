@@ -16,8 +16,6 @@ const year = today.getFullYear();
 const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
 const day = String(today.getDate()).padStart(2, '0');
 const formattedDate = `${year}-${month}-${day}`;
-const form = document.querySelector(".create_request_form");
-
 
 if (dateField) {
     dateField.value = formattedDate;
@@ -218,6 +216,8 @@ function showImages() {
         }
     }
 }
+
+const form = document.querySelector(".create_request_form");
 
 // Handle form submission
 form.addEventListener("submit", function (event) {
