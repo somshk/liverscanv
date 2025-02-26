@@ -3,20 +3,24 @@
 {% block content %}
 <div class="upload-container">
     <div class="upload-main">
-    <form action="" method="post">
+        <div id="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <p>Uploading... Please wait.</p>
+        </div>
+        <div id="toast-container"></div>
+    <form action="" method="post" class="create_request_form" enctype="multipart/form-data">
     {% csrf_token %}
         <input type="hidden" name="action" value="create_request_diagnosis">
         <div class="upload-title">Upload now</div>
         <div class="upload-image-container">
             <div class="upload-image-main">
-                <input type="file" name="images" multiple>
+                <input type="file" name="images" accept="image/*" multiple hidden required>
                 <div class="upload-image-icon">
                     <img src="{% static 'img/upload-icon.svg' %}" alt="">
                 </div>
                 <div class="upload-image-text">
                     Drag and drop images or click to upload
                 </div>
-                <input type="file" class="input-files" accept="image/*" multiple hidden>
             </div>
         </div>
         <div class="upload-details">
@@ -41,6 +45,11 @@
                     </div>
                 </div>
             </div>
+            {% if success_message %}
+            <div class="success_message_upload">
+                {{ success_message }}    
+            </div>
+            {% endif %}
             <div class="upload-submit">
                 <button class="upload-submit-button" type="submit">Submit</button>
             </div>

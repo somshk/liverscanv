@@ -1131,3 +1131,31 @@ button {
         margin-top: 15px;   
     }
 }
+
+#loading-spinner {
+    text-align: center;
+    z-index: 9999 !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(255,255,255,0.5);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .spinner {
+        border: 5px solid rgba(0, 0, 0, 0.1);
+        border-left-color: $main-color-accent;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 10px;
+    }
+    
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

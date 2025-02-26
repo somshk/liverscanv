@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Diagnosis
 from django.core.exceptions import ValidationError
 from .utils import upload_triphasic_images, multitemporal_fusion
+from datetime import date
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -14,12 +15,21 @@ class CustomUserCreationForm(UserCreationForm):
 def create_request_diagnosis(request):
     """  Creates a Diagnosis instance given form data. """
     # required fields for all sources
-    patient_initials = request.POST.get('initials')
+    patient_initials = request.POST.get('initials').upper()
     birthday = request.POST.get('birthday')
     doctor_assigned = request.user
 
     ct_scans = request.FILES.getlist('images')
-    image_urls = upload_triphasic_images(ct_scans, patient_initials, birthday)
+
+    for ct_scan in ct_scans:
+        print(f"Received file: {ct_scan.name}")
+
+    if len(ct_scans) != 3:
+        return (False, ['Please upload exactly three CT scan images.'])
+    
+    current_date = date.today().strftime("%Y-%m-%d")
+    
+    image_urls = upload_triphasic_images(ct_scans, patient_initials, birthday, current_date)
     
     unenhanced_ct, arterial_ct, portal_venous_ct = image_urls
 
@@ -37,11 +47,11 @@ def create_request_diagnosis(request):
         diagnosis.save()
 
         # Call Cloud Function to process images
-        multitemporal_fusion(image_urls, patient_initials, birthday)
+        multitemporal_fusion(image_urls, patient_initials, birthday, diagnosis.diagnosis_date)
 
     
     except ValidationError as e:
-        return (False, e.messages)
+        return (False, ['Validation errors occurred.'])
     return (True, None)
 
 def validate_diagnosis(request):
@@ -68,6 +78,6 @@ def validate_diagnosis(request):
         return True, None
 
     except Diagnosis.DoesNotExist:
-        return False, f"No Diagnosis found for the provided patient ID."
+        return False, [f"No Diagnosis found for the provided patient ID."]
     except ValidationError as e:
-        return False, e.messages
+        return False, ['Validation errors occurred.']

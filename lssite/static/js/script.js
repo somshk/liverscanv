@@ -1,6 +1,6 @@
 const dropArea = document.querySelector(".upload-image-main");
 const dropText = document.querySelector(".upload-image-text");
-const input = document.querySelector(".input-files");
+const input = document.querySelector("input[name='images']");
 const dateField = document.querySelector(".date-now");
 const noSelectedBanner = document.querySelector(".assigned-reports-report-details");
 const selectedBanner = document.querySelector(".doctor-results-main");
@@ -16,6 +16,8 @@ const year = today.getFullYear();
 const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
 const day = String(today.getDate()).padStart(2, '0');
 const formattedDate = `${year}-${month}-${day}`;
+const form = document.querySelector(".create_request_form");
+
 
 if (dateField) {
     dateField.value = formattedDate;
@@ -163,34 +165,30 @@ async function fetchDiagnosisDetails(diagnosisId) {
 let files = [];
 
 
-
-dropArea.onclick = () => {
-    input.click();
-};
+dropArea.onclick = () => input.click();
 
 input.addEventListener("change", function() {
-    file = Array.from(this.files);
+    files = Array.from(this.files); // Update files array
     showImages();
 });
 
-dropArea.addEventListener("dragover", (event)=>{
+dropArea.addEventListener("dragover", (event) => {
     event.preventDefault();
     dropArea.classList.add("active-image");
     dropText.textContent = "Release to Upload files";
 });
 
-dropArea.addEventListener("dragleave", ()=>{
+dropArea.addEventListener("dragleave", () => {
     dropArea.classList.remove("active-image");
     dropText.textContent = "Drag and drop images or click to upload";
 });
 
-
-dropArea.addEventListener("drop", (event)=>{
+dropArea.addEventListener("drop", (event) => {
     event.preventDefault();
     dropArea.classList.remove("active-image");
-    files = Array.from(event.dataTransfer.files);
+    let droppedFiles = Array.from(event.dataTransfer.files);
+    files = [...files, ...droppedFiles]; // Merge new and existing files
     showImages();
-
 });
 
 function showImages() {
@@ -198,7 +196,8 @@ function showImages() {
     dropArea.innerHTML = "";
 
     if (files.length > 3) {
-        alert("You can only upload to 3 images.");
+        alert("You can only upload up to 3 images.");
+        files = [];
         return;
     }
 
@@ -207,63 +206,67 @@ function showImages() {
             let fileReader = new FileReader();
             fileReader.onload = () => {
                 let fileURL = fileReader.result;
-                console.log(fileURL);
                 let imgTag = `<img src="${fileURL}" alt="">`;
                 dropArea.innerHTML += imgTag;
-            }
+            };
             fileReader.readAsDataURL(file);
         } else {
             alert("It must be an image file.");
-            dropArea.classList.remove("active-image");
-            dropText.textContent = "Drag and drop images or click to upload";
-            return
+            files = [];
+            dropArea.innerHTML = "";
+            return;
         }
     }
 }
 
 // Handle form submission
-form.addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the default form submission
+form.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-    // Create a FormData object
-    let formData = new FormData();
+    let formData = new FormData(form); // Automatically includes all fields
 
-    // Append the description (or other form fields)
-    formData.append('description', descriptionInput.value);
-
-    // Append images (files) to the FormData object
-    files.forEach((file, index) => {
-        formData.append(`image${index + 1}`, file);
+    // Append images properly
+    files.forEach((file) => {
+        formData.append("images", file);
     });
 
-    // Send the form data to the backend via fetch API
-    fetch('/your-django-endpoint/', {
+    // Show the loading spinner
+    let spinner = document.getElementById("loading-spinner");
+    spinner.style.display = "flex";
+
+    fetch('/doctor/upload', {
         method: 'POST',
         body: formData,
         headers: {
-            // You don't need to add the content-type header for FormData, 
-            // the browser automatically sets the correct content-type including boundary.
-            'X-CSRFToken': getCookie('csrftoken') // Add CSRF token for Django
+            'X-CSRFToken': getCookie('csrftoken') // Ensure CSRF token is included
         }
     })
-    .then(response => response.json())
+    .then(response => response.json())  // Expect JSON response
     .then(data => {
-        console.log("Success:", data); // Handle success (for example, displaying prediction results)
+        spinner.style.display = "none";
+        if (data.success) {
+            alert(data.message);  // Show alert on success
+            setTimeout(() => {
+                window.location.reload();  // Reload after 1 second
+            }, 1000);
+        } else {
+            alert("Error: " + data.errors.join("\n"));  // Show errors
+        }
     })
-    .catch((error) => {
-        console.error("Error:", error); // Handle errors
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An unexpected error occurred. Please try again.");
     });
 });
 
-// CSRF Token helper function for Django (use this if your Django app uses CSRF protection)
+// CSRF Token helper function
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            if (cookie.startsWith(name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }

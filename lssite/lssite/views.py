@@ -3,7 +3,7 @@ from liverscan.models import (Diagnosis)
 from liverscan.forms import create_request_diagnosis, validate_diagnosis
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth import logout
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.core.exceptions import PermissionDenied
 
 # Create your views here.
@@ -59,6 +59,13 @@ def upload_view(request):
     context['curr_page'] = 'upload'
 
     if request.method == "POST" and request.POST.get("action") == 'create_request_diagnosis':
-        create_request_diagnosis(request=request)
-    
+        success, error_messages = create_request_diagnosis(request=request)
+
+        if not success:
+            context['errors'] = error_messages
+            return JsonResponse({'success': False, 'errors': error_messages}, status=400)
+        
+        if success:
+            return JsonResponse({'success': True, 'message': 'Diagnosis request created successfully'})
+
     return render(request, 'upload.html', context=context)
