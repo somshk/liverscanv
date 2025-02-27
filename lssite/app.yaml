@@ -1,0 +1,13 @@
+runtime: python310
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "lssite.settings"
+  GOOGLE_CLOUD_PROJECT: "liverscanv"
+  APPENGINE_URL: "liverscanv.de.r.appspot.com"
+
+handlers:
+- url: /static
+  static_dir: staticfiles/
+
+- url: /.*
+  script: auto

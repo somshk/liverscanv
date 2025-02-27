@@ -12,24 +12,38 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from google.cloud import secretmanager
+from urllib.parse import urlparse
+import environ
+import io
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+from .config import env
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('DEBUG') != '0' else False
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+APPENGINE_URL = 'liverscanv.de.r.appspot.com/'
+if APPENGINE_URL:
+    # Ensure a scheme is present in the URL before it's processed.
+    if not urlparse(APPENGINE_URL).scheme:
+        APPENGINE_URL = f"https://{APPENGINE_URL}"
 
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, 'www.liverscanv.com', 'liverscanv.com']
+    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL,
+                            "https://www.liverscanv.com", 
+                            "https://liverscanv.com",
+                            ]
+    SECURE_SSL_REDIRECT = True
+else:
+    ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -80,8 +94,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': os.getenv('OAuthClientID'),
-            'secret': os.getenv('OAuthClientSecret'),
+            'client_id': env('OAuthClientID'),
+            'secret': env('OAuthClientSecret'),
             'key': ''
         },
     }
@@ -124,19 +138,14 @@ WSGI_APPLICATION = 'lssite.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.getenv("DBName"),
-    #     'USER': os.getenv("DBUser"),
-    #     'PASSWORD': os.getenv("DBPassword"),
-    #     'HOST': os.getenv("DBHost"),
-    #     'PORT': os.getenv("DBPort"),
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
-    }
+    'default': env.db()
 }
+
+if os.getenv("USE_CLOUD_AUTH_PROXY", None):
+    DATABASES["default"]["HOST"] = "127.0.0.1"
+    DATABASES["default"]["PORT"] = 5432
+
+print(env.db())
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -173,7 +182,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -182,3 +191,4 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -6,6 +6,7 @@ from datetime import date
 import os
 import requests
 from google.cloud import storage
+from lssite.config import env
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -37,9 +38,9 @@ def upload_triphasic_images(buckets, ct_scans, patient_initials, birthday, curre
 def multitemporal_fusion(diagnosis: Diagnosis, image_urls, patient_initials, birthday, current_date):
     try:
         requests.post(
-                os.getenv("MTF_FUNCTION_ENDPOINT"),
-                json={"input_bucket": os.getenv('INPUT_BUCKET'),
-                    "output_buckets": [os.getenv('PREPROCESSED_BUCKET')],
+                env("MTF_FUNCTION_ENDPOINT"),
+                json={"input_bucket": env('INPUT_BUCKET'),
+                    "output_buckets": [env('PREPROCESSED_BUCKET')],
                     "unenhanced_path": image_urls[0],
                     "arterial_path": image_urls[1],
                     "portal_venous_path": image_urls[2],
@@ -72,7 +73,7 @@ def create_request_diagnosis(request):
     
     current_date = date.today().strftime("%Y-%m-%d")
     
-    input_buckets = [os.getenv('INPUT_BUCKET')]
+    input_buckets = [env('INPUT_BUCKET')]
     image_urls = upload_triphasic_images(input_buckets, ct_scans, patient_initials, birthday, current_date)
 
     unenhanced_ct, arterial_ct, portal_venous_ct = image_urls

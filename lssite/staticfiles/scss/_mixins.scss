@@ -1,0 +1,34 @@
+@import './vars';
+
+@mixin flex-center($flex_dir: row) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: $flex_dir;
+}
+
+@mixin viewport-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+}
+
+@mixin viewport-center-child {
+    max-width: $max-width-viewport;
+    width: 100vw;
+}
+
+@mixin form-fields {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    width: 520px;
+    height: 60px;
+    border-radius: 100px;
+    border: none;
+    outline: none;
+    box-shadow: -1px 2px 5px rgba(0, 0, 0, 0.25);
+}
+
