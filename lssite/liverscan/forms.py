@@ -28,7 +28,7 @@ def upload_triphasic_images(buckets, ct_scans, patient_initials, birthday, curre
             scan.seek(0)
             file_name = f'{patient_initials}-{birthday}-{current_date}-{suffix}.png'
             blob = bucket.blob(file_name)
-            blob.upload_from_file(scan)
+            blob.upload_from_file(scan, content_type='image/png')
             image_urls.append(file_name)
             print(image_urls)
 

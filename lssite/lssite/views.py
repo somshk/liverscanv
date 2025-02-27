@@ -11,16 +11,7 @@ def logout_view(request):
     if request.method == "POST" and request.POST.get("action") == 'logout':
         if 'logout' in request.POST:
             logout(request)
-
-            print('WE LOGGED OUT ALREADY FUCKING REDIRECT!')
-
-            context = {}
-            context['curr_page'] = 'home'
-            context['diagnosed'] = len(Diagnosis.objects.all())
-            
-            print(context)
-
-            return True # render(request, 'index.html', context=context)
+            return True
         
 def doctor_required(user):
     is_doctor = user.is_authenticated and user.role == 'doctor'
@@ -43,8 +34,6 @@ def doctor_results_view(request):
     if logout_view(request):
         return redirect('home')
 
-
-    print("gagu ano ba mauuna")
     context = {}
     context['curr_page'] = 'doctor-results'
     context['diagnoses'] = Diagnosis.objects.filter(status__lt = 3, doctor_assigned=request.user)

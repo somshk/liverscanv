@@ -8,6 +8,7 @@ from .forms import CustomUserCreationForm
 from django.contrib import messages
 import requests
 from liverscan.models import CustomUser
+from api.views import get_gcs_credentials, get_signed_url
 
 # Create your views here.
 def signup_view(request):
@@ -75,7 +76,7 @@ def login_view(request):
     context = {}
 
     if request.method == "POST":
-        initials = request.POST['initials']
+        initials = request.POST['initials'].upper()
         birthday = request.POST['birthday']
         diagnosis_date = request.POST['diagnosis-date']
 
@@ -83,6 +84,12 @@ def login_view(request):
             diagnosis = Diagnosis.objects.get(patient_initials=initials,
                                    birthday=birthday,
                                      diagnosis_date=diagnosis_date)
+            
+            diagnosis.proxy_unenhanced_ct = get_signed_url(diagnosis.unenhanced_ct)
+            diagnosis.proxy_arterial_ct = get_signed_url(diagnosis.arterial_ct)
+            diagnosis.proxy_portal_venous_ct = get_signed_url(diagnosis.portal_venous_ct)
+            diagnosis.save()
+
             context['curr_page'] = 'results'
             context['diagnosis'] = diagnosis
             return render(request, 'results.html', context=context)
@@ -90,3 +97,4 @@ def login_view(request):
             context['error'] = 'Invalid login credentials.'
             return render(request, 'login.html', context=context)
     return render(request, 'login.html', context=context)
+

@@ -16,19 +16,19 @@
             <div class="results-images">
                 <div class="results-image-block">
                     <div class="results-image">
-                        <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="unenhanced"> <!--this is where image should be -->
+                        <img class="results-image-image" src="{{ diagnosis.proxy_unenhanced_ct }}" alt="unenhanced"> <!--this is where image should be -->
                     </div>
                     <div class="results-text">unenhanced</div>
                 </div>
                 <div class="results-image-block">
                     <div class="results-image">
-                        <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="arterial"> <!--this is where image should be -->
+                        <img class="results-image-image" src="{{ diagnosis.proxy_arterial_ct }}" alt="arterial"> <!--this is where image should be -->
                     </div>
                     <div class="results-text">arterial</div>
                 </div>
                 <div class="results-image-block">
                     <div class="results-image">
-                        <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="portal venous"> <!--this is where image should be -->
+                        <img class="results-image-image" src="{{ diagnosis.proxy_portal_venous_ct }}" alt="portal venous"> <!--this is where image should be -->
                     </div>
                     <div class="results-text">portal venous</div>
                 </div>

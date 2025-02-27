@@ -1,9 +1,0 @@
-TODO:
-1. enable media web upload
-2. enable GCS bucket for loading images
-3. responsive results, history, and upload
-4. fix homepage images of contributors
-5. fix CSS of image uploads, active selection in cards
-6. contact number (telephone or mobile) and GForms for analytics
-7. PDF of output
-8. Catch when the user is anonymous or without permission page
