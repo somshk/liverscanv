@@ -100,7 +100,7 @@ function getStatusText(status) {
         case 1:
             return 'Waiting for predictions';
         case 2:
-            return 'Waiting for validation';
+            return 'Subject for validation';
         case 3:
             return 'Finished';
         default:
@@ -145,11 +145,11 @@ async function fetchDiagnosisDetails(diagnosisId) {
         remarksDiv.textContent = diagnosis_data.remarks || "";
         diagnosisDateDiv.textContent = diagnosis_data.diagnosis_date || "";
 
-        if (diagnosis_data.initial_diagnosis == 'normal' || diagnosis_data.initial_diagnosis == null) {
-            areaDiv.textContent = `0 cm\u00B2`;
-        } else {
-            areaDiv.textContent = `${diagnosis_data.area} cm\u00B2`;
-        }
+        // if (diagnosis_data.initial_diagnosis == 'normal' || diagnosis_data.initial_diagnosis == null) {
+        //     areaDiv.textContent = `0 cm\u00B2`;
+        // } else {
+        //     areaDiv.textContent = `${diagnosis_data.area} cm\u00B2`;
+        // }
 
         const unenhanced_img = document.querySelector('img[alt="unenhanced"]')
         unenhanced_img.src = diagnosis_data.proxy_unenhanced_ct

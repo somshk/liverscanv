@@ -46,13 +46,21 @@ class Diagnosis(models.Model):
     arterial_ct = models.URLField()
     portal_venous_ct = models.URLField()
     transformed_ct = models.URLField(blank=True, null=True)
-    inference_result = models.URLField(blank=True, null=True)
+    result_json = models.URLField(blank=True, null=True)
+    result_stacked_image = models.URLField(blank=True, null=True)
+    result_unenhanced_image = models.URLField(blank=True, null=True)
+    result_arterial_image = models.URLField(blank=True, null=True)
+    result_portal_venous_image = models.URLField(blank=True, null=True)
     
     # signed URLs
-    proxy_unenhanced_ct = models.URLField(blank=True, null=True)
-    proxy_arterial_ct = models.URLField(blank=True, null=True)
-    proxy_portal_venous_ct = models.URLField(blank=True, null=True)
-    proxy_transformed_ct = models.URLField(blank=True, null=True)
+    proxy_unenhanced_ct = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_arterial_ct = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_portal_venous_ct = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_transformed_ct = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_result_stacked_image = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_result_unenhanced_image = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_result_arterial_image = models.URLField(blank=True, null=True, max_length=4096)
+    proxy_result_portal_venous_image = models.URLField(blank=True, null=True, max_length=4096)
     
     # output of model
     initial_diagnosis = models.CharField(null=True, max_length=7, choices=DIAGNOSIS_CHOICES)

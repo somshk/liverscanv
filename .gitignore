@@ -3,3 +3,4 @@ env/**
 *.json
 db.sqlite3
 cloud-sql-proxy
+.local_env

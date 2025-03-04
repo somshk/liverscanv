@@ -7,6 +7,7 @@ import os
 import requests
 from google.cloud import storage
 from lssite.config import env
+from api.views import get_signed_url
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -31,24 +32,57 @@ def upload_triphasic_images(buckets, ct_scans, patient_initials, birthday, curre
             blob = bucket.blob(file_name)
             blob.upload_from_file(scan, content_type='image/png')
             image_urls.append(file_name)
-            print(image_urls)
 
     return image_urls
 
+def get_diagnosis_from_response(signed_url):
+    response = requests.get(signed_url)
+
+    if response.status_code == 200:
+        json_data = response.json()  # Automatically parses JSON
+        if json_data:
+            return json_data['predictions'][0]['class']
+    else:
+        print(f"Failed to fetch JSON: {response.status_code} - {response.text}")
+
+
 def multitemporal_fusion(diagnosis: Diagnosis, image_urls, patient_initials, birthday, current_date):
+
+    preprocessed_filename = f'{patient_initials}-{birthday}-{current_date}-preprocessed.png'
+    result_json = f'{patient_initials}-{birthday}-{current_date}-result.json'
+    result_stacked_image = f'{patient_initials}-{birthday}-{current_date}-result.png'
+    result_unenhanced_image = f'{patient_initials}-{birthday}-{current_date}-unenhanced-result.png'
+    result_arterial_image = f'{patient_initials}-{birthday}-{current_date}-arterial-result.png'
+    result_portal_venous_image = f'{patient_initials}-{birthday}-{current_date}-portal-venous-result.png'
+
     try:
         requests.post(
                 env("MTF_FUNCTION_ENDPOINT"),
                 json={"input_bucket": env('INPUT_BUCKET'),
-                    "output_buckets": [env('PREPROCESSED_BUCKET')],
+                    "output_bucket": env('OUTPUT_BUCKET'),
                     "unenhanced_path": image_urls[0],
                     "arterial_path": image_urls[1],
                     "portal_venous_path": image_urls[2],
-                    "preprocessed_filename": f'{patient_initials}-{birthday}-{current_date}-preprocessed.png'}
+                    "preprocessed_filename": preprocessed_filename,
+                    "result_json": result_json,
+                    "result_stacked_image": result_stacked_image,
+                    "result_unenhanced_image": result_unenhanced_image,
+                    "result_arterial_image": result_arterial_image,
+                    "result_portal_venous_image": result_portal_venous_image,
+                    }
             )
         
-        diagnosis.transformed_ct = f'{patient_initials}-{birthday}-{current_date}-preprocessed.png'
+        
+        diagnosis.transformed_ct = preprocessed_filename
+        diagnosis.result_json = result_json
+        diagnosis.result_stacked_image = result_stacked_image
+        diagnosis.result_unenhanced_image = result_unenhanced_image
+        diagnosis.result_arterial_image = result_arterial_image
+        diagnosis.result_portal_venous_image = result_portal_venous_image
+        diagnosis.status = 2
+        diagnosis.initial_diagnosis = get_diagnosis_from_response(get_signed_url(result_json))
         diagnosis.save()
+
     except:
         return (False, ['Validation errors occurred.'])
 
@@ -64,9 +98,6 @@ def create_request_diagnosis(request):
     doctor_assigned = request.user
 
     ct_scans = request.FILES.getlist('images')
-
-    for ct_scan in ct_scans:
-        print(f"Received file: {ct_scan.name}")
 
     if len(ct_scans) != 3:
         return (False, ['Please upload exactly three CT scan images.'])

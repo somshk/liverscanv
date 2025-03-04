@@ -43,19 +43,19 @@
                 <div class="results-images">
                     <div class="results-image-block">
                         <div class="results-image">
-                            <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="unenhanced">
+                            <img class="results-image-image" src="{{ diagnosis.proxy_unenhanced_ct }}" alt="unenhanced">
                         </div>
                         <div class="results-text">unenhanced</div>
                     </div>
                     <div class="results-image-block">
                         <div class="results-image">
-                            <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="arterial">
+                            <img class="results-image-image" src="{{ diagnosis.proxy_arterial_ct }}" alt="arterial">
                         </div>
                         <div class="results-text">arterial</div>
                     </div>
                     <div class="results-image-block">
                         <div class="results-image">
-                            <img class="results-image-image" src="{% static 'img/ct_sample.png' %}" alt="portal venous">
+                            <img class="results-image-image" src="{{ diagnosis.proxy_portal_venous_ct }}" alt="portal venous">
                         </div>
                         <div class="results-text">portal venous</div>
                     </div>
@@ -84,10 +84,10 @@
                                 <div class="results-details-item-name">Date of Diagnosis:</div>
                                 <div class="results-details-item-value date-value"></div>
                             </div>
-                            <div class="results-details-item">
+                            <!-- <div class="results-details-item">
                                 <div class="results-details-item-name">Area of Diagnosis:</div>
                                 <div class="results-details-item-value area-value">cm&sup2;</div>
-                            </div>
+                            </div> -->
                             <div class="results-details-item">
                                 <div class="results-details-item-name">Final Diagnosis:</div>
                                 <select id="status" name="final_diagnosis" required>

@@ -28,7 +28,7 @@ def get_gcs_credentials():
         print("GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable not set.")
         return None
 
-def get_signed_url(blob_name, bucket_name=env("INPUT_BUCKET"), expiration=timedelta(minutes=15)):
+def get_signed_url(blob_name, bucket_name=env("OUTPUT_BUCKET"), expiration=timedelta(minutes=15)):
     """Generates a signed URL for a Google Cloud Storage blob.
 
     Args:
@@ -68,9 +68,9 @@ class DiagnosisDetail(generics.RetrieveUpdateDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance: Diagnosis = self.get_object() #This is needed to get the object.
 
-        instance.proxy_unenhanced_ct = get_signed_url(instance.unenhanced_ct)
-        instance.proxy_arterial_ct = get_signed_url(instance.arterial_ct)
-        instance.proxy_portal_venous_ct = get_signed_url(instance.portal_venous_ct)
+        instance.proxy_unenhanced_ct = get_signed_url(instance.result_unenhanced_image)
+        instance.proxy_arterial_ct = get_signed_url(instance.result_arterial_image)
+        instance.proxy_portal_venous_ct = get_signed_url(instance.result_portal_venous_image)
 
         instance.save()
 

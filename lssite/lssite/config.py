@@ -8,10 +8,11 @@ from google.cloud import secretmanager
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(DEBUG=(bool, False))
-env_file = os.path.join(BASE_DIR, ".env")
+env_file = os.path.join(BASE_DIR, ".local_env")
 
 if os.path.isfile(env_file):
     env.read_env(env_file)
+    
 elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     client = secretmanager.SecretManagerServiceClient()

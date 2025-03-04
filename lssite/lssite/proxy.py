@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from google.cloud import secretmanager
+from urllib.parse import urlparse
+import environ
+import io
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +28,23 @@ from .config import env
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True 
+DEBUG = False
 
+APPENGINE_URL = 'liverscanv.de.r.appspot.com/'
+if APPENGINE_URL:
+    # Ensure a scheme is present in the URL before it's processed.
+    if not urlparse(APPENGINE_URL).scheme:
+        APPENGINE_URL = f"https://{APPENGINE_URL}"
 
-ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, 'www.liverscanv.com', 'liverscanv.com', '127.0.0.1']
+    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL,
+                            "https://www.liverscanv.com", 
+                            "https://liverscanv.com",
+                            ]
+    SECURE_SSL_REDIRECT = True
+else:
+    ALLOWED_HOSTS = ["*"]
+
 
 # Application definition
 
