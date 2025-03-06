@@ -4,3 +4,4 @@ env/**
 db.sqlite3
 cloud-sql-proxy
 .local_env
+.gcloud_ignore

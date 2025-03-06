@@ -8,6 +8,7 @@ import requests
 from google.cloud import storage
 from lssite.config import env
 from api.views import get_signed_url
+import json
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -41,6 +42,7 @@ def get_diagnosis_from_response(signed_url):
     if response.status_code == 200:
         json_data = response.json()  # Automatically parses JSON
         if json_data:
+            json_data = json.loads(json_data)
             return json_data['predictions'][0]['class']
     else:
         print(f"Failed to fetch JSON: {response.status_code} - {response.text}")
@@ -72,15 +74,22 @@ def multitemporal_fusion(diagnosis: Diagnosis, image_urls, patient_initials, bir
                     }
             )
         
+        print('check')
         
         diagnosis.transformed_ct = preprocessed_filename
+        
+        print(diagnosis.transformed_ct)
+        
         diagnosis.result_json = result_json
         diagnosis.result_stacked_image = result_stacked_image
         diagnosis.result_unenhanced_image = result_unenhanced_image
         diagnosis.result_arterial_image = result_arterial_image
         diagnosis.result_portal_venous_image = result_portal_venous_image
         diagnosis.status = 2
-        diagnosis.initial_diagnosis = get_diagnosis_from_response(get_signed_url(result_json))
+        try:
+            diagnosis.initial_diagnosis = get_diagnosis_from_response(get_signed_url(result_json))
+        except Exception as e:
+            print(f'Error {e}')
         diagnosis.save()
 
     except:
@@ -109,6 +118,7 @@ def create_request_diagnosis(request):
 
     unenhanced_ct, arterial_ct, portal_venous_ct = image_urls
 
+
     try:
         # create the report instance
         diagnosis = Diagnosis(
@@ -119,8 +129,6 @@ def create_request_diagnosis(request):
             birthday = birthday,
             doctor_assigned=doctor_assigned
         )
-
-        diagnosis.save()
 
         # Call Cloud Function to process images
         multitemporal_fusion(diagnosis, image_urls, patient_initials, birthday, diagnosis.diagnosis_date)

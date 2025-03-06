@@ -85,9 +85,9 @@ def login_view(request):
                                    birthday=birthday,
                                      diagnosis_date=diagnosis_date)
             
-            diagnosis.proxy_unenhanced_ct = get_signed_url(diagnosis.unenhanced_ct)
-            diagnosis.proxy_arterial_ct = get_signed_url(diagnosis.arterial_ct)
-            diagnosis.proxy_portal_venous_ct = get_signed_url(diagnosis.portal_venous_ct)
+            diagnosis.proxy_result_unenhanced_image = get_signed_url(diagnosis.result_unenhanced_image)
+            diagnosis.proxy_result_arterial_image = get_signed_url(diagnosis.result_arterial_image)
+            diagnosis.proxy_result_portal_venous_image = get_signed_url(diagnosis.result_portal_venous_image)
             diagnosis.save()
 
             context['curr_page'] = 'results'

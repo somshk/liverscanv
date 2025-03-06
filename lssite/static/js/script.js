@@ -198,21 +198,51 @@ dropArea.addEventListener("drop", (event) => {
 
 function showImages() {
     let validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    
+    // Clear the drop area and set it as a vertical flex container.
     dropArea.innerHTML = "";
-
+    dropArea.style.display = "flex";
+    dropArea.style.flexDirection = "column";
+    
     if (files.length > 3) {
         alert("You can only upload up to 3 images.");
         files = [];
         return;
     }
-
-    for (let file of files) {
+    
+    files.forEach((file, index) => {
         if (validTypes.includes(file.type)) {
             let fileReader = new FileReader();
             fileReader.onload = () => {
                 let fileURL = fileReader.result;
-                let imgTag = `<img src="${fileURL}" alt="">`;
-                dropArea.innerHTML += imgTag;
+                
+                // Create a container for the row
+                let rowContainer = document.createElement("div");
+                rowContainer.style.display = "flex";
+                rowContainer.style.flexDirection = "row";
+                rowContainer.style.alignItems = "center";
+                rowContainer.style.margin = "5px 0"; // spacing between rows
+                
+                // Create the image element
+                let img = document.createElement("img");
+                img.src = fileURL;
+                img.alt = file.name;
+                img.style.maxWidth = "30px";
+                img.style.maxHeight = "30px";
+                img.style.display = "block";
+                img.style.marginRight = "10px"; // space between image and file name
+                
+                // Create the file name text element
+                let fileNameText = document.createElement("span");
+                fileNameText.textContent = file.name;
+                fileNameText.style.fontSize = "14px"; // adjust size as needed
+                
+                // Append the image and file name to the row container
+                rowContainer.appendChild(img);
+                rowContainer.appendChild(fileNameText);
+                
+                // Append the row container to the drop area
+                dropArea.appendChild(rowContainer);
             };
             fileReader.readAsDataURL(file);
         } else {
@@ -221,8 +251,10 @@ function showImages() {
             dropArea.innerHTML = "";
             return;
         }
-    }
+    });
 }
+
+
 
 const form = document.querySelector(".create_request_form");
 
