@@ -36,11 +36,20 @@ if APPENGINE_URL:
     if not urlparse(APPENGINE_URL).scheme:
         APPENGINE_URL = f"https://{APPENGINE_URL}"
 
-    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, 'www.liverscanv.com', 'liverscanv.com', '127.0.0.1']
-    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL,
-                            "https://www.liverscanv.com", 
-                            "https://liverscanv.com",
-                            ]
+    ALLOWED_HOSTS = [
+    "liverscanv.onrender.com",
+    ".onrender.com",
+    "www.liverscanv.com",
+    "liverscanv.com",
+    "127.0.0.1",
+    "localhost",
+    ]
+    CSRF_TRUSTED_ORIGINS = [
+    "https://liverscanv.onrender.com",
+    "https://*.onrender.com",
+    "https://www.liverscanv.com",
+    "https://liverscanv.com",
+    ]
     SECURE_SSL_REDIRECT = True
 else:
     ALLOWED_HOSTS = ["*"]
